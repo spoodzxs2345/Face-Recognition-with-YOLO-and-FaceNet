@@ -1,3 +1,4 @@
 tensorflow==2.9.0
 ultralytics
 deepface
+opencv-python
