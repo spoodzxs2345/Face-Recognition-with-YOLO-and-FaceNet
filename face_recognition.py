@@ -38,7 +38,7 @@ while True:
             face = frame[y1:y2, x1:x2]
             name = 'Intruder'
 
-            result = DeepFace.find(face, data, model_name='Facenet', distance_metric='cosine', enforce_detection=False, threshold=0.2)
+            result = DeepFace.find(face, data, model_name='Facenet', distance_metric='cosine', enforce_detection=False, threshold=0.3)
 
             # get the name. draw bounding box and put the name on the frame
             if result[0].shape[0] != 0:
