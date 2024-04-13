@@ -1,2 +1,5 @@
 .venv
 data
+*.jpg
+test.py
+*.csv
