@@ -46,7 +46,7 @@ while True:
 
                 detected_objects.append((object_name, (x1, y1, x2, y2)))
         
-        if counter % 10 == 0:
+        if counter % 10 == 0: # check every 10 frames
             # compare the face to the faces in the dataset
             for i, (object_name, (x1, y1, x2, y2)) in enumerate(detected_objects):
                 face = frame[y1:y2, x1:x2]
