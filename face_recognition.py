@@ -60,10 +60,10 @@ while True:
                     name = raw_name.split('\\')[1]
 
                     # check if the name is already in the csv file
-                    with open(f'C:/Users/Delsie/Desktop/projects/face_recognition_v2/{current_date}.csv', 'r') as file:
-                        reader = csv.reader(file)
-                        next(reader)
-                        names = [row[0] for row in reader]
+                with open(f'C:/Users/Delsie/Desktop/projects/face_recognition_v2/{current_date}.csv', 'r') as file:
+                    reader = csv.reader(file)
+                    next(reader)
+                    names = [row[0] for row in reader]
                     
                     if name not in names:
                         with open(f'C:/Users/Delsie/Desktop/projects/face_recognition_v2/{current_date}.csv', 'a', newline='') as file:
