@@ -99,6 +99,7 @@ while True:
                             
                             if secondsElapsed > 30:
                                 mode_type = 2
+                                img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
 
 
                     else:
