@@ -83,13 +83,23 @@ while True:
                             writer = csv.writer(file)
                             writer.writerow([name, current_date, now.strftime('%H:%M:%S')])
 
-                            (w, h), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_COMPLEX, 1, 1)
-                            offset = (414 - w) // 2
-                            
+                            if name != 'Intruder':
+                                # show image and name on the screen
+                                mode_type = 1
+                                img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
+                                (w, h), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 1, 1)
+                                offset = (414 - w) // 2
+                                cv2.putText(img_bg, name, (808 + offset, 445), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
+                                img_attendance = cv2.imread(result[0]['identity'][0])
+                                img_resize = cv2.resize(img_attendance, (216, 216))
+                                img_bg[175:175 + 216, 909:909 + 216] = img_resize
 
-                            mode_type = 1
 
+                            secondsElapsed = (datetime.datetime.now() - now).total_seconds()
                             
+                            if secondsElapsed > 30:
+                                mode_type = 2
+
 
                     else:
                         mode_type = 3
