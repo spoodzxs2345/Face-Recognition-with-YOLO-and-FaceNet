@@ -64,16 +64,6 @@ while True:
                 # compare the face to the faces in the dataset
                 for i, (object_name, (x1, y1, x2, y2)) in enumerate(detected_objects):
                     face = img_bg[y1:y2, x1:x2]
-                    name = 'Intruder'
-        if counter % 5 == 0:
-            if len(detected_objects) != 0: # check for faces
-                # compare the face to the faces in the dataset
-                for i, (object_name, (x1, y1, x2, y2)) in enumerate(detected_objects):
-                    face = img_bg[y1:y2, x1:x2]
-                    name = 'Unknown'
-                    type = 'Visitor'
-
-                    result = DeepFace.find(face, data, model_name='Facenet', distance_metric='euclidean_l2', enforce_detection=False, threshold=0.9)
                     name = 'Unknown'
                     type = 'Visitor'
 
@@ -87,13 +77,13 @@ while True:
 
 
                             # check if the name is already in the csv file
-                    with open(f'C:/Users/Delsie/Desktop/projects/face_recognition_v2/{current_date}.csv', 'r') as file:
+                    with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'r') as file:
                         reader = csv.reader(file)
                         next(reader)
                         names = [row[0] for row in reader]
                             
                         if name not in names:
-                            with open(f'C:/Users/Delsie/Desktop/projects/face_recognition_v2/{current_date}.csv', 'a', newline='') as file:
+                            with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'a', newline='') as file:
                                 writer = csv.writer(file)
                                 writer.writerow([name, type, current_date, now.strftime('%H:%M:%S')])
 
