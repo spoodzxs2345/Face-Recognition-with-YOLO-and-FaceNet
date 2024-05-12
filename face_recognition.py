@@ -59,64 +59,62 @@ while True:
 
                 detected_objects.append((object_name, (x1, y1, x2, y2)))
         
-        if counter % 5 == 0:
-            if len(detected_objects) != 0: # check for faces
-                # compare the face to the faces in the dataset
-                for i, (object_name, (x1, y1, x2, y2)) in enumerate(detected_objects):
-                    face = img_bg[y1:y2, x1:x2]
-                    name = 'Unknown'
-                    type = 'Visitor'
+        
+        if len(detected_objects) != 0: # check for faces
+            # compare the face to the faces in the dataset
+            for i, (object_name, (x1, y1, x2, y2)) in enumerate(detected_objects):
+                face = img_bg[y1:y2, x1:x2]
+                name = 'Unknown'
+                type = 'Visitor'
 
-                    result = DeepFace.find(face, data, model_name='Facenet', distance_metric='euclidean_l2', enforce_detection=False, threshold=0.8)
+                result = DeepFace.find(face, data, model_name='Facenet', distance_metric='euclidean_l2', enforce_detection=False, threshold=0.8)
 
                     # get the name. draw bounding box and put the name on the frame
-                    if result[0].shape[0] != 0:
-                        raw_name = result[0]['identity'][0].split('/')[-1]
-                        name = raw_name.split('\\')[2]
-                        type = raw_name.split('\\')[1]
+                if result[0].shape[0] != 0:
+                    raw_name = result[0]['identity'][0].split('/')[-1]
+                    name = raw_name.split('\\')[2]
+                    type = raw_name.split('\\')[1]
 
 
                             # check if the name is already in the csv file
-                    with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'r') as file:
-                        reader = csv.reader(file)
-                        next(reader)
-                        names = [row[0] for row in reader]
+                with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'r') as file:
+                    reader = csv.reader(file)
+                    next(reader)
+                    names = [row[0] for row in reader]
                             
-                        if name not in names:
-                            with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'a', newline='') as file:
-                                writer = csv.writer(file)
-                                writer.writerow([name, type, current_date, now.strftime('%H:%M:%S')])
+                    if name not in names:
+                        if name != 'Unknown':
+                            # show image and name on the screen
+                            secondsElapsed = (datetime.datetime.now() - now).total_seconds()
+                            if secondsElapsed < 60:
+                                mode_type = 1
+                                img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
+                                (w, h), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 1, 1)
+                                offset = (414 - w) // 2
+                                cv2.putText(img_bg, name, (808 + offset, 445), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
+                                cv2.putText(img_bg, type, (808 + offset, 445 + h + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
+                                img_attendance = cv2.imread(result[0]['identity'][0])
+                                img_resize = cv2.resize(img_attendance, (216, 216))
+                                img_bg[175:175 + 216, 909:909 + 216] = img_resize
+                            else:
+                                mode_type = 2
+                                img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
 
-                                if name != 'Unknown':
-                                    # show image and name on the screen
-                                    mode_type = 1
-                                    img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
-                                    (w, h), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 1, 1)
-                                    offset = (414 - w) // 2
-                                    cv2.putText(img_bg, name, (808 + offset, 445), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
-                                    cv2.putText(img_bg, type, (808 + offset, 445 + h + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
-                                    img_attendance = cv2.imread(result[0]['identity'][0])
-                                    img_resize = cv2.resize(img_attendance, (216, 216))
-                                    img_bg[175:175 + 216, 909:909 + 216] = img_resize
+                                    
+                    else:
+                        mode_type = 3
+                    
+                    if type == 'Visitor' or name not in names:
+                        with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'a', newline='') as file:
+                            writer = csv.writer(file)
+                            writer.writerow([name, type, current_date, now.strftime('%H:%M:%S')])
 
+                    color = (0, 0, 255) if name == 'Unknown' else (0, 255, 0)
 
-                                secondsElapsed = (datetime.datetime.now() - now).total_seconds()
-                                
-                                if secondsElapsed > 30:
-                                    mode_type = 2
-                                    img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
-
-
-                        else:
-                            mode_type = 3
-
-                        color = (0, 0, 255) if name == 'Unknown' else (0, 255, 0)
-
-                        cv2.rectangle(img_bg, (x1, y1), (x2, y2), color, 2)
-                        #cv2.putText(img_bg, name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
-            else:
-                mode_type = 0
-        counter += 1
+                    cv2.rectangle(img_bg, (x1, y1), (x2, y2), color, 2)
+                    #cv2.putText(img_bg, name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+        else:
+            mode_type = 0
         
         cv2.imshow('attendance', img_bg)
         #cv2.imshow('feed', frame)
