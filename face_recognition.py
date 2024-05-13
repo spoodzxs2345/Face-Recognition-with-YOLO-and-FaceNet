@@ -82,36 +82,33 @@ while True:
                     next(reader)
                     names = [row[0] for row in reader]
                             
-                    if name not in names:
-                        if name != 'Unknown':
-                            # show image and name on the screen
-                            secondsElapsed = (datetime.datetime.now() - now).total_seconds()
-                            if secondsElapsed < 60:
-                                mode_type = 1
-                                img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
-                                (w, h), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 1, 1)
-                                offset = (414 - w) // 2
-                                cv2.putText(img_bg, name, (808 + offset, 445), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
-                                cv2.putText(img_bg, type, (808 + offset, 445 + h + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
-                                img_attendance = cv2.imread(result[0]['identity'][0])
-                                img_resize = cv2.resize(img_attendance, (216, 216))
-                                img_bg[175:175 + 216, 909:909 + 216] = img_resize
-                            else:
-                                mode_type = 2
-                                img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
-
-                                    
+                    if name != 'Unknown' and name not in names:
+                        # show image and name on the screen
+                        mode_type = 1
+                        img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]
+                        (w, h), _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 1, 1)
+                        offset = (414 - w) // 2
+                        cv2.putText(img_bg, name, (808 + offset, 445), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
+                        cv2.putText(img_bg, type, (808 + offset, 445 + h + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 50), 1)
+                        img_attendance = cv2.imread(result[0]['identity'][0])
+                        img_resize = cv2.resize(img_attendance, (216, 216))
+                        img_bg[175:175 + 216, 909:909 + 216] = img_resize
+                        #secondsElapsed = (datetime.datetime.now() - now).total_seconds()
+                        counter += 1
+                        if counter % 30 == 0 :
+                            mode_type = 2
+                            img_bg[44:44+633, 808:808+414] = img_mode_list[mode_type]                
                     else:
                         mode_type = 3
                     
-                    if type == 'Visitor' or name not in names:
-                        with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'a', newline='') as file:
-                            writer = csv.writer(file)
-                            writer.writerow([name, type, current_date, now.strftime('%H:%M:%S')])
+            if type == 'Visitor' or name not in names:
+                with open(f'face_recognition/Face-Recognition-with-YOLO-and-FaceNet/{current_date}.csv', 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([name, type, current_date, now.strftime('%H:%M:%S')])
 
-                    color = (0, 0, 255) if name == 'Unknown' else (0, 255, 0)
+            color = (0, 0, 255) if name == 'Unknown' else (0, 255, 0)
 
-                    cv2.rectangle(img_bg, (x1, y1), (x2, y2), color, 2)
+            cv2.rectangle(img_bg, (x1, y1), (x2, y2), color, 2)
                     #cv2.putText(img_bg, name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
         else:
             mode_type = 0
